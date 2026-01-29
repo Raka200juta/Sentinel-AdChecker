@@ -77,7 +77,7 @@ pip install requests beautifulsoup4 pycryptodome packaging
 ### ☕ Support the Project
 
 If this tool helped you in your Red Team engagement, consider buying me a coffee.
-**Feature requests from supporters are prioritized!**
+Feature requests from supporters are prioritized!
 
-[![Trakteer](https://img.shields.io/badge/Trakteer-Support_Local-C32F3D?style=for-the-badge&logo=trakteer&logoColor=white)](teer.id/r4kiya)
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-Donate-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/rak1ya)
+[Trakteer] (teer.id/r4kiya)
+[Ko-fi] (https://ko-fi.com/rak1ya)
