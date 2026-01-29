@@ -64,7 +64,7 @@ If you want to modify the code or build it yourself:
 
 ### 1. Clone & Install
 ```bash
-git clone [https://github.com/YOUR_USERNAME/SentinelDesktop.git](https://github.com/YOUR_USERNAME/SentinelDesktop.git)
+git clone [https://github.com/Raka200juta/SentinelDesktop.git](https://github.com/Raka200juta/SentinelDesktop.git)
 cd SentinelDesktop
 
 # Install Node dependencies
@@ -74,7 +74,8 @@ npm install
 pip install requests beautifulsoup4 pycryptodome packaging
 
 ---
-### ☕ Support the Project
+
+### Support the Project
 
 If this tool helped you in your Red Team engagement, consider buying me a coffee.
 Feature requests from supporters are prioritized!
