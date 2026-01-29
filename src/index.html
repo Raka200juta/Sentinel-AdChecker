@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTINEL RED TEAM</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SENTINEL <span class="blink">_v3</span></h1>
+            <p>AES DECRYPTION & ADWARE INTELLIGENCE</p>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="urlInput" placeholder="ENTER TARGET URL (e.g. example.com)" />
+            <button id="scanBtn">INITIATE SCAN</button>
+        </div>
+
+        <div class="terminal-window" id="terminal">
+            <div class="log-entry system">> SYSTEM READY. WAITING FOR TARGET...</div>
+        </div>
+        
+        <div class="status-bar">
+            <span id="statusText">IDLE</span>
+            <span id="torStatus">ENSURE TOR PORT: 9050</span>
+        </div>
+    </div>
+    <script src="renderer.js"></script>
+</body>
+</html>

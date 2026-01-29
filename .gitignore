@@ -1,0 +1,30 @@
+# --- System Files ---
+.DS_Store
+Thumbs.db
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+venv/
+env/
+.env
+build/
+dist/
+*.spec
+
+# --- Node.js / Electron ---
+node_modules/
+npm-debug.log
+
+# --- Build Output (PENTING) ---
+# Kita tidak mau upload file .exe/.deb hasil build ke source code
+dist/
+release/
+
+# --- IDE Settings ---
+.vscode/
+.idea/
+
+# --- Tor Data ---
+# Jangan upload folder temporary data Tor jika ada
+backend/tor_data/
