@@ -1,0 +1,70 @@
+name: Build Sentinel Apps
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. Setup Python & Node.js
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 2. Install Python Dependencies
+      - name: Install Python Libs
+        run: pip install pyinstaller requests beautifulsoup4 pycryptodome packaging
+
+      # 3. BUILD PYTHON ENGINE (WINDOWS)
+      - name: Build Python Backend (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          cd backend
+          # Perhatikan separator ; untuk Windows
+          pyinstaller --onefile --name sentinel-engine --add-data "bin;bin" bridge.py
+          # Pindahkan hasil build ke root folder agar Electron bisa ambil
+          move dist\sentinel-engine.exe ..\
+
+      # 4. BUILD PYTHON ENGINE (MAC/LINUX)
+      - name: Build Python Backend (Unix)
+        if: matrix.os != 'windows-latest'
+        run: |
+          cd backend
+          # Perhatikan separator : untuk Unix
+          pyinstaller --onefile --name sentinel-engine --add-data "bin:bin" bridge.py
+          # Pindahkan hasil build ke root folder
+          mv dist/sentinel-engine ../
+
+      # 5. Install Electron & Build App
+      - name: Build Electron App
+        run: |
+          npm install
+          npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 6. Upload Hasil ke GitHub
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sentinel-App-${{ matrix.os }}
+          path: |
+            dist/*.exe
+            dist/*.deb
+            dist/*.dmg
