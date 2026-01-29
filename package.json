@@ -7,8 +7,10 @@
     "start": "electron .",
     "dist": "electron-builder"
   },
-  "author": "Rakasatryo",
-  "email": "rak1ya909090@gmail.com",
+  "author": {
+    "name": "Rakasatryo",
+    "email": "rak1ya909090@gmail.com",
+  },
   "license": "ISC",
   "devDependencies": {
     "electron": "^28.0.0",
