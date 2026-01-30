@@ -14,7 +14,7 @@ def unbuffered_print(text):
 if __name__ == "__main__":
     # Ambil URL dari argumen command line (dikirim oleh Electron)
     if len(sys.argv) < 2:
-        unbuffered_print("[-] Error: No URL provided.")
+        unbuffered_print("Error: No URL provided.")
         sys.exit(1)
 
     target_url = sys.argv[1]
@@ -29,7 +29,7 @@ if __name__ == "__main__":
         # Override metode log internal jika ada, atau biarkan print bawaan
         # Sentinel v2 menggunakan print() biasa, jadi kita cukup flush stdout
         
-        unbuffered_print(f"[*] Starting Scan on: {target_url}")
+        unbuffered_print(f"Starting Scan on: {target_url}")
         
         bot.init_connection()
         sys.stdout.flush()
@@ -43,8 +43,8 @@ if __name__ == "__main__":
         bot.scan_ad_networks()
         sys.stdout.flush()
         
-        unbuffered_print("\n[*] MISSION COMPLETE.")
+        unbuffered_print("\nMISSION COMPLETE.")
         
     except Exception as e:
-        unbuffered_print(f"[-] CRITICAL ERROR: {str(e)}")
+        unbuffered_print(f"CRITICAL ERROR: {str(e)}")
         sys.exit(1)

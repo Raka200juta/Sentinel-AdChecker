@@ -1,139 +1,159 @@
-// --- src/renderer.js ---
-
-// 1. Ambil Elemen UI
+// --- CONFIG & UI ELEMENTS ---
 const urlInput = document.getElementById('urlInput');
 const scanBtn = document.getElementById('scanBtn');
 const logContainer = document.getElementById('logContainer');
-const visualizerSection = document.getElementById('visualizer-section');
+// UI Elements
 const targetTitle = document.getElementById('target-title');
 const targetScreenshot = document.getElementById('target-screenshot');
+const torStatus = document.getElementById('tor-status');
+const timelineContainer = document.getElementById('redirect-timeline');
+const hopBadge = document.querySelector('.count-badge');
 
-// 2. Helper Log
+// --- HELPER LOGGING ---
 function addLog(message, type = 'info') {
     const p = document.createElement('p');
     p.textContent = `> ${message}`;
-    if (type === 'error') p.style.color = '#ff5555';
-    else if (type === 'success') p.style.color = '#55ff55';
-    else if (type === 'debug') p.style.color = '#888888'; // Warna abu untuk debug
-    else p.style.color = '#00ff00';
+    p.className = 'log-line'; 
     
-    p.style.fontFamily = 'monospace';
-    p.style.margin = '2px 0';
+    if (type === 'error') p.classList.add('log-error');
+    else if (type === 'debug') p.classList.add('log-debug');
+    else p.classList.add('log-info');
+    
     logContainer.appendChild(p);
     logContainer.scrollTop = logContainer.scrollHeight;
 }
 
-// 3. Fungsi Reset Tombol (PENTING)
-function resetScanButton() {
-    scanBtn.disabled = false;
-    scanBtn.innerText = "INITIATE SCAN";
-    scanBtn.style.cursor = "pointer";
-    addLog("[=] READY FOR NEW SCAN.", 'success');
-}
+// --- HELPER TIMELINE RENDERER ---
+function renderTimeline(chain) {
+    timelineContainer.innerHTML = ''; // Bersihkan list lama
+    hopBadge.innerText = `${chain.length} Events`;
 
-// 4. Listener Utama
-scanBtn.addEventListener('click', async () => {
-    // A. Validasi
-    let rawUrl = urlInput.value.trim();
-    if (!rawUrl) {
-        addLog("Error: Please enter a target URL.", 'error');
+    if (chain.length === 0) {
+        timelineContainer.innerHTML = '<li class="timeline-item"><div class="info"><span class="url">No data captured.</span></div></li>';
         return;
     }
 
-    // Auto-fix URL
-    let url = rawUrl;
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        url = 'https://' + url;
+    chain.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = 'timeline-item';
+        
+        // Animasi
+        setTimeout(() => li.style.opacity = '1', index * 50);
+
+        // Styling untuk "Ad Resource"
+        if (item.status === 'AD-MEDIA') li.classList.add('red-flag');
+
+        li.innerHTML = `
+            <span class="time">${item.status}</span>
+            <div class="info">
+                <span class="method">${item.method}</span>
+                <span class="url" title="${item.url}">${item.url}</span>
+            </div>
+        `;
+        timelineContainer.appendChild(li);
+    });
+}
+
+// --- FUNGSI PEMBERSIH (RESET) ---
+function resetUI() {
+    // 1. Bersihkan Log
+    logContainer.innerHTML = '';
+    
+    // 2. Bersihkan Timeline
+    timelineContainer.innerHTML = `
+        <li class="timeline-item placeholder-item">
+            <span class="time">READY</span>
+            <div class="info"><span class="url">Waiting for input...</span></div>
+        </li>
+    `;
+    hopBadge.innerText = '0 Hops';
+
+    // 3. Reset Gambar & Status
+    targetScreenshot.src = '';
+    targetScreenshot.style.opacity = '0';
+    targetTitle.innerText = "Scanning...";
+    torStatus.innerText = "SCANNING";
+    torStatus.style.color = "orange";
+}
+
+// --- MAIN LISTENER ---
+scanBtn.addEventListener('click', async () => {
+    let rawUrl = urlInput.value.trim();
+    if (!rawUrl) {
+        addLog("Error: URL empty.", 'error');
+        return;
     }
 
-    // B. Siapkan UI
-    logContainer.innerHTML = ''; 
-    addLog(`INITIALIZING SCAN ON: ${url}...`);
+    // --- STEP 1: RESET DULU (Biar gak perlu Ctrl+R) ---
+    resetUI();
     
-    // Kunci Tombol
     scanBtn.disabled = true;
-    scanBtn.innerText = "SCANNING (Please Wait)...";
-    scanBtn.style.cursor = "progress";
+    scanBtn.innerText = "SCANNING...";
+    addLog(`INITIALIZING SCAN: ${rawUrl}...`);
 
-    // C. DEFINISI TUGAS (TASKS)
+    let watchdogTimerID;
 
-    // Task 1: Python Engine
+    // TASK 1: PYTHON ENGINE
     const pythonTask = new Promise((resolve) => {
-        // Listener Pesan Python
         window.api.onFromPython('from-python', (data) => {
-            const cleanData = data.toString().trim();
-            
-            // Filter log kosong
-            if(cleanData) {
-                const type = cleanData.toLowerCase().includes('error') ? 'error' : 'info';
-                addLog(cleanData, type);
-            }
-
-            // Cek sinyal selesai
-            if (cleanData.includes('[DONE]')) {
-                addLog("[DEBUG] Python Engine Finished.", 'debug');
-                resolve("PYTHON_DONE");
-            }
+            const rawText = data.toString();
+            const lines = rawText.split('\n');
+            lines.forEach(line => {
+                const cleanLine = line.trim();
+                if(cleanLine) {
+                    const type = cleanLine.toLowerCase().includes('error') ? 'error' : 'info';
+                    addLog(cleanLine, type);
+                }
+                if (cleanLine.includes('[DONE]')) resolve("PYTHON_DONE");
+            });
         });
-        
-        // Jalankan Python
-        window.api.sendToPython('to-python', url);
+        window.api.sendToPython('to-python', rawUrl);
     });
 
-    // Task 2: Headless Browser (Visualizer)
+    // TASK 2: HEADLESS PATHFINDER (Dengan Resource Sniffer)
     const headlessTask = (async () => {
-        // Reset Gambar
-        if (visualizerSection) {
-            visualizerSection.style.display = 'block';
-            targetTitle.innerText = "Initializing Tor Circuit...";
-            targetScreenshot.style.opacity = '0.3';
-        }
-        
-        addLog("[*] Launching Stealth Browser...", 'info');
-
         try {
-            // Panggil Main Process
-            const result = await window.api.headlessScan(url);
+            const result = await window.api.headlessScan(rawUrl);
 
             if (result.success) {
-                addLog("[+] Visual Capture Success!", 'success');
-                if(targetTitle) targetTitle.innerText = result.title;
-                if(targetScreenshot) {
-                    targetScreenshot.src = result.screenshot;
-                    targetScreenshot.style.opacity = '1';
+                targetTitle.innerText = result.title || "No Title";
+                targetScreenshot.src = result.screenshot;
+                targetScreenshot.style.opacity = '1';
+                torStatus.innerText = "SECURE"; // Atau "COMPLETED"
+                torStatus.style.color = "green";
+                
+                addLog("[+] Snapshot Captured.", 'info');
+
+                if (result.chain) {
+                    renderTimeline(result.chain);
+                    addLog(`[+] Tracker found ${result.chain.length} events (Redirects + Ads).`, 'info');
                 }
             } else {
-                addLog(`[-] Visual Capture Failed: ${result.error}`, 'error');
-                if(targetTitle) targetTitle.innerText = "Capture Failed";
+                addLog(`[-] Scan Failed: ${result.error}`, 'error');
+                torStatus.innerText = "ERROR";
             }
         } catch (err) {
-            addLog(`[!] Headless Error: ${err}`, 'error');
+            addLog(`[!] Critical Error: ${err}`, 'error');
         }
-        
-        addLog("[DEBUG] Visualizer Finished.", 'debug');
         return "HEADLESS_DONE";
     })();
 
-    // Task 3: SAFETY TIMER (Penyelamat Tombol Macet)
-    // Jika 60 detik berlalu dan scan belum kelar, paksa selesai.
+    // TASK 3: WATCHDOG (60 Detik)
     const safetyTimer = new Promise((resolve) => {
-        setTimeout(() => {
-            addLog("[!] WATCHDOG: Scan timed out forcefully.", 'error');
+        watchdogTimerID = setTimeout(() => {
+            addLog("[!] WATCHDOG: Scan timed out.", 'error');
             resolve("TIMEOUT");
-        }, 60000); // 60 Detik (1 Menit)
+        }, 60000);
     });
 
-    // D. EKSEKUSI PARALEL (RACE)
-    // Kita menunggu: (Python SELESAI && Headless SELESAI) -ATAU- (Timer Waktu Habis)
     try {
-        await Promise.race([
-            Promise.all([pythonTask, headlessTask]), // Skenario Normal
-            safetyTimer                              // Skenario Macet
-        ]);
-    } catch (err) {
-        addLog(`[!] Critical Error: ${err}`, 'error');
+        const winner = await Promise.race([Promise.all([pythonTask, headlessTask]), safetyTimer]);
+        if (winner !== "TIMEOUT") clearTimeout(watchdogTimerID);
     } finally {
-        // E. APAPUN YANG TERJADI, NYALAKAN TOMBOL LAGI
-        resetScanButton();
+        clearTimeout(watchdogTimerID);
+        // --- STEP AKHIR: KEMBALIKAN TOMBOL ---
+        scanBtn.disabled = false;
+        scanBtn.innerText = "START SCAN"; // Reset teks tombol
+        addLog("[=] READY FOR NEW SCAN.", 'info');
     }
 });

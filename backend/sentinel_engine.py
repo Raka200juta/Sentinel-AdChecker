@@ -49,9 +49,9 @@ class Sentinel:
             res = self.session.get(self.target_url, timeout=20)
             self.html_content = res.text # Simpan untuk scan tracker nanti
             
-            print(f"    [+] Status Code: {res.status_code}")
+            print(f"    Status Code: {res.status_code}")
             if self.session.cookies:
-                print(f"    [+] Cookies Acquired: {len(self.session.cookies)}")
+                print(f"    Cookies Acquired: {len(self.session.cookies)}")
             
             self._scan_text_for_payloads(res.text, "Main HTML")
             
@@ -62,10 +62,10 @@ class Sentinel:
                 if not any(x in full_url for x in ['jquery', 'bootstrap']):
                     self.js_links.append(full_url)
             
-            print(f"    [+] Found {len(self.js_links)} suspicious JS files.")
+            print(f"    Found {len(self.js_links)} suspicious JS files.")
 
         except Exception as e:
-            print(f"    [-] Connection Failed: {e}")
+            print(f"    Connection Failed: {e}")
             sys.exit(1)
 
     def scan_assets(self):
@@ -92,7 +92,7 @@ class Sentinel:
             except:
                 pass
         
-        print(f"    [+] Intelijen Terkumpul:")
+        print(f"    Intelijen Terkumpul:")
         print(f"        - Potential Keys : {len(self.found_keys)}")
         print(f"        - Potential IVs  : {len(self.found_ivs)}")
         print(f"        - Payloads Found : {len(self.payloads)}")
@@ -107,7 +107,7 @@ class Sentinel:
     def crack_payloads(self):
         print(f"\n[*] [PHASE 3] Attempting Auto-Decryption...")
         if not self.payloads or not self.found_keys:
-            print("    [-] Skipping decryption (No payloads/keys).")
+            print("    Skipping decryption (No payloads/keys).")
             return
 
         try:
@@ -127,7 +127,7 @@ class Sentinel:
                     if self._try_decrypt(key_str, iv_str, p['data']):
                         decrypted = True; break
                 if decrypted: break
-            if not decrypted: print("       [-] Decryption failed.")
+            if not decrypted: print("       Decryption failed.")
 
     def _try_decrypt(self, key_str, iv_str, b64_data):
         try:
@@ -141,8 +141,8 @@ class Sentinel:
             cipher = AES.new(key, AES.MODE_CBC, iv)
             result = unpad(cipher.decrypt(encrypted_data), AES.block_size).decode('utf-8')
             if "{" in result or result.isprintable():
-                print(f"       [+] CRACKED! Key: {key_str}")
-                print(f"       [+] Content: {result}")
+                print(f"       CRACKED! Key: {key_str}")
+                print(f"       Content: {result}")
                 return True
         except:
             pass
@@ -170,7 +170,7 @@ class Sentinel:
         }
         
         detected = []
-        print(f"    [+] Total External Domains Found: {len(external_domains)}")
+        print(f"    Total External Domains Found: {len(external_domains)}")
         
         for d in external_domains:
             # Cek keywords umum
@@ -188,7 +188,7 @@ class Sentinel:
             for d in list(set(detected))[:15]: # Tampilkan max 15 unik
                 print(f"        -> {d}")
         else:
-            print("    [+] No aggressive ad-networks detected by keyword.")
+            print("    No aggressive ad-networks detected by keyword.")
 
 if __name__ == "__main__":
     print("="*50)

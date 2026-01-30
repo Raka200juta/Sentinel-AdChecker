@@ -68,7 +68,7 @@ class TorController:
         
         # 1. Validasi keberadaan file
         if not os.path.exists(tor_binary):
-            print(f"[-] CRITICAL: Tor binary not found at: {tor_binary}")
+            print(f"CRITICAL: Tor binary not found at: {tor_binary}")
             print(f"    Make sure you have 'bin/tor_win' and 'bin/tor_linux' folders!")
             return False
 
@@ -102,19 +102,19 @@ class TorController:
                 startupinfo=startupinfo
             )
         except Exception as e:
-            print(f"[-] Failed to execute Tor: {e}")
+            print(f"Failed to execute Tor: {e}")
             return False
 
         # 6. Tunggu Bootstrap (Maksimal 20 detik)
         print("[*] Bootstrapping Tor Network... (Please wait)")
         for i in range(20):
             if self.is_port_open('127.0.0.1', self.port):
-                print(f"[+] Tor Connected! (Attempt {i+1})")
+                print(f"Tor Connected! (Attempt {i+1})")
                 return True
             time.sleep(1)
             # print(".", end="", flush=True) # Opsional: loading effect
         
-        print("\n[-] Tor timed out. Check your internet connection.")
+        print("\nTor timed out. Check your internet connection.")
         return False
 
     def stop(self):

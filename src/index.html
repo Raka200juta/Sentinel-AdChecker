@@ -4,41 +4,86 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SENTINEL RED TEAM</title>
+    <title>SENTINEL Ad-Checker</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>SENTINEL <span class="blink">_v1</span></h1>
-            <p>AES DECRYPTION & ADWARE INTELLIGENCE</p>
-        </div>
 
-        <div class="input-group">
-            <input type="text" id="urlInput" placeholder="ENTER TARGET URL (e.g. vidcloudmv.net)" />
-            <button id="scanBtn">INITIATE SCAN</button>
-        </div>
-
-        <div id="visualizer-section" style="margin: 15px 0; display: none; border: 1px solid #333; padding: 10px; background: #050505;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h3 style="color: #00ff00; font-family: monospace; margin: 0; font-size: 14px;">[+] TARGET SNAPSHOT</h3>
-                <span style="font-size: 10px; color: #666; font-family: monospace;">SECURE TOR TUNNEL</span>
+    <div class="app-wrapper">
+        
+        <nav class="menubar">
+            <div class="brand-area">
+                <span class="brand-name">SENTINEL</span>
+                <span class="brand-ver">v1.2</span>
             </div>
             
-            <p id="target-title" style="color: #ccc; font-family: monospace; font-size: 12px; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</p>
-            
-            <img id="target-screenshot" src="" style="width: 100%; border: 1px solid #444; opacity: 0.5; display: block;" />
-        </div>
+            <div class="tab-container">
+                <button class="tab-btn active">Dashboard</button>
+                
+                <button class="tab-btn">Target Scope</button>
+                <button class="tab-btn">Proxy</button>
+                <button class="tab-btn">Intruder</button>
+                <button class="tab-btn">Settings</button>
+            </div>
+        </nav>
 
-        <div class="terminal-window" id="logContainer">
-            <div class="log-entry system">> SYSTEM READY. WAITING FOR TARGET...</div>
-        </div>
-        
-        <div class="status-bar">
-            <span id="statusText">IDLE</span>
-            <span id="torStatus">TOR PROXY: 127.0.0.1:9050</span>
-        </div>
+        <main class="main-content">
+            
+            <header class="toolbar">
+                <div class="input-group">
+                    <label for="urlInput">Target URL:</label>
+                    <input type="text" id="urlInput" placeholder="https://example.com" spellcheck="false">
+                </div>
+                <button id="scanBtn">Start Scan</button>
+            </header>
+
+            <div class="dashboard-grid">
+                
+                <div class="card visualizer-card">
+                    <div class="card-header">
+                        <h3>Live Screenshot</h3>
+                        <span class="status-badge" id="tor-status">IDLE</span>
+                    </div>
+                    <div class="card-body" id="visualizer-section">
+                        <div class="monitor-frame">
+                            <img id="target-screenshot" src="" alt="Target Feed">
+                            <div class="scan-overlay"></div>
+                        </div>
+                        <p id="target-title" class="target-label">No target loaded</p>
+                    </div>
+                </div>
+
+                <div class="card pathfinder-card">
+                    <div class="card-header">
+                        <h3>Redirect Chain</h3>
+                        <span class="count-badge">0 Hops</span>
+                    </div>
+                    <div class="card-body scrollable">
+                        <ul class="timeline" id="redirect-timeline">
+                            <li class="timeline-item placeholder-item">
+                                <span class="time">READY</span>
+                                <div class="info">
+                                    <span class="url">System ready.</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card logs-card">
+                    <div class="card-header compact">
+                        <h3>Event Log</h3>
+                    </div>
+                    <div class="card-body terminal-body" id="logContainer">
+                        <p class="log-info">> System Initialized...</p>
+                    </div>
+                </div>
+
+            </div>
+        </main>
     </div>
+
     <script src="renderer.js"></script>
 </body>
 </html>

@@ -1,22 +1,21 @@
+// src/preload.js
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
-    // --- FUNGSI LAMA (SCANNER PYTHON) ---
-    // Mengirim data ke Python
+    // Fungsi kirim data ke Python
     sendToPython: (channel, data) => {
-        ipcRenderer.send(channel, data);
-    },
-    // Menerima data dari Python
-    onFromPython: (channel, func) => {
-        // Kita filter channel biar aman
-        const validChannels = ['from-python', 'python-error'];
+        let validChannels = ['to-python'];
         if (validChannels.includes(channel)) {
-            // Hapus listener lama biar gak dobel
-            ipcRenderer.removeAllListeners(channel);
+            ipcRenderer.send(channel, data);
+        }
+    },
+    // Fungsi terima data dari Python
+    onFromPython: (channel, func) => {
+        let validChannels = ['from-python'];
+        if (validChannels.includes(channel)) {
             ipcRenderer.on(channel, (event, ...args) => func(...args));
         }
     },
-
-    // --- FUNGSI BARU (HEADLESS SCANNER) ---
+    // Fungsi Panggil Headless Browser (Pathfinder)
     headlessScan: (url) => ipcRenderer.invoke('perform-headless-scan', url)
 });
