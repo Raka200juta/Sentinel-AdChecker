@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SENTINEL RED TEAM</title>
     <link rel="stylesheet" href="styles.css">
@@ -9,22 +10,33 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>SENTINEL <span class="blink">_v3</span></h1>
+            <h1>SENTINEL <span class="blink">_v1</span></h1>
             <p>AES DECRYPTION & ADWARE INTELLIGENCE</p>
         </div>
 
         <div class="input-group">
-            <input type="text" id="urlInput" placeholder="ENTER TARGET URL (e.g. example.com)" />
+            <input type="text" id="urlInput" placeholder="ENTER TARGET URL (e.g. vidcloudmv.net)" />
             <button id="scanBtn">INITIATE SCAN</button>
         </div>
 
-        <div class="terminal-window" id="terminal">
+        <div id="visualizer-section" style="margin: 15px 0; display: none; border: 1px solid #333; padding: 10px; background: #050505;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="color: #00ff00; font-family: monospace; margin: 0; font-size: 14px;">[+] TARGET SNAPSHOT</h3>
+                <span style="font-size: 10px; color: #666; font-family: monospace;">SECURE TOR TUNNEL</span>
+            </div>
+            
+            <p id="target-title" style="color: #ccc; font-family: monospace; font-size: 12px; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</p>
+            
+            <img id="target-screenshot" src="" style="width: 100%; border: 1px solid #444; opacity: 0.5; display: block;" />
+        </div>
+
+        <div class="terminal-window" id="logContainer">
             <div class="log-entry system">> SYSTEM READY. WAITING FOR TARGET...</div>
         </div>
         
         <div class="status-bar">
             <span id="statusText">IDLE</span>
-            <span id="torStatus">ENSURE TOR PORT: 9050</span>
+            <span id="torStatus">TOR PROXY: 127.0.0.1:9050</span>
         </div>
     </div>
     <script src="renderer.js"></script>
