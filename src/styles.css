@@ -1,159 +1,127 @@
-/* --- RESET & FONTS --- */
+/* =========================================
+   1. RESET & GLOBAL FONTS
+   ========================================= */
 * { box-sizing: border-box; user-select: none; }
 
 body {
     margin: 0; padding: 0;
-    background-color: #f0f0f0; /* Abu muda khas aplikasi desktop */
+    background-color: #f0f0f0; /* Abu muda */
     color: #000;
     font-family: Arial, sans-serif; /* Native Font */
     height: 100vh;
     overflow: hidden;
-    font-size: 13px; /* Ukuran font standar desktop app */
+    font-size: 13px;
 }
 
-/* Layout Vertikal (Atas ke Bawah) */
 .app-wrapper { 
     display: flex; 
     flex-direction: column; 
     height: 100vh; 
 }
 
-/* --- 1. MENUBAR (TOP) --- */
+/* =========================================
+   2. MENUBAR (TOP NAVIGATION)
+   ========================================= */
 .menubar {
-    height: 35px; /* Pendek dan padat */
-    background: #e1e1e1;
-    border-bottom: 1px solid #adadad;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    flex-shrink: 0;
+    height: 35px; background: #e1e1e1; border-bottom: 1px solid #adadad;
+    display: flex; align-items: center; padding: 0 10px; flex-shrink: 0;
 }
 
 .brand-area {
-    margin-right: 20px;
-    display: flex; align-items: baseline; gap: 5px;
+    margin-right: 20px; display: flex; align-items: baseline; gap: 5px;
 }
 .brand-name { font-weight: 900; color: #df2531; letter-spacing: 0.5px; }
 .brand-ver { font-size: 10px; color: #666; }
 
 .tab-container {
-    display: flex;
-    height: 100%;
-    align-items: flex-end; /* Tab nempel ke bawah */
+    display: flex; height: 100%; align-items: flex-end;
 }
 
 .tab-btn {
     background: transparent;
-    border: 1px solid transparent;
-    border-bottom: none;
-    padding: 0 15px;
-    height: 28px; /* Sedikit lebih pendek dari bar */
-    cursor: pointer;
-    font-size: 12px;
-    color: #333;
-    border-radius: 4px 4px 0 0;
-    margin-right: 2px;
+    border: 1px solid transparent; border-bottom: none;
+    padding: 0 15px; height: 28px; 
+    cursor: pointer; font-size: 12px; color: #333;
+    border-radius: 4px 4px 0 0; margin-right: 2px;
 }
 
-.tab-btn:hover {
-    background: #eaeaea;
-    border-color: #ccc;
-}
+.tab-btn:hover { background: #eaeaea; border-color: #ccc; }
 
-/* TAB AKTIF (Gaya Burp Suite / Browser) */
 .tab-btn.active {
-    background: #ffffff; /* Putih nyambung ke konten */
-    border: 1px solid #adadad;
-    border-bottom: 1px solid #ffffff; /* Tutupi garis bawah menubar */
-    font-weight: bold;
-    color: #000;
-    position: relative;
-    top: 1px; /* Turun 1px biar nimpah garis */
-    z-index: 10;
+    background: #ffffff;
+    border: 1px solid #adadad; border-bottom: 1px solid #ffffff; 
+    font-weight: bold; color: #000;
+    position: relative; top: 1px; z-index: 10;
 }
 
-/* --- 2. MAIN CONTENT --- */
+/* =========================================
+   3. MAIN CONTENT & TOOLBAR
+   ========================================= */
 .main-content {
-    flex: 1; 
-    display: flex; 
-    flex-direction: column;
-    background: #ffffff; /* Konten putih bersih */
-    padding: 15px;
-    overflow: hidden;
+    flex: 1; display: flex; flex-direction: column;
+    background: #ffffff; padding: 15px; overflow: hidden;
 }
 
-/* --- TOOLBAR (Input Area) --- */
 .toolbar {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    padding: 10px;
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    align-items: center;
-    flex-shrink: 0;
+    display: flex; gap: 10px; margin-bottom: 15px; padding: 10px;
+    background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px;
+    align-items: center; flex-shrink: 0;
 }
 
-.input-group {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+.input-group { flex: 1; display: flex; align-items: center; gap: 10px; }
 .input-group label { font-weight: bold; color: #555; }
 
 input {
-    flex: 1;
-    background: #fff;
-    border: 1px solid #999;
-    padding: 6px 10px;
-    font-family: Arial, sans-serif;
-    font-size: 13px;
-    outline: none;
+    flex: 1; background: #fff; border: 1px solid #999;
+    padding: 6px 10px; font-size: 13px; outline: none;
 }
 input:focus { border-color: #df2531; }
 
 button#scanBtn {
-    background: #df2531;
-    color: white;
-    border: 1px solid #b01c26;
-    padding: 6px 20px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 12px;
+    background: #df2531; color: white; border: 1px solid #b01c26;
+    padding: 6px 20px; font-weight: bold; cursor: pointer; font-size: 12px;
 }
 button#scanBtn:hover { background: #c01520; }
 button:disabled { background: #ccc; border-color: #999; color: #666; cursor: default; }
 
-/* --- GRID SYSTEM --- */
+/* =========================================
+   4. VIEW MANAGEMENT
+   ========================================= */
+.view-section { display: none; height: 100%; overflow: hidden; }
+.view-section.active { display: block; }
+
+/* =========================================
+   5. LAYOUT GRIDS & CARDS
+   ========================================= */
+
+/* View 1: Dashboard Grid */
 .dashboard-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 150px; /* Log lebih pendek */
-    gap: 10px;
-    height: 100%;
-    overflow: hidden;
-    min-height: 0;
+    grid-template-rows: 1fr 150px; /* Log area lebih pendek */
+    gap: 10px; height: 100%; min-height: 0;
 }
 
-/* --- CARD STYLE (Kotak Tegas) --- */
-.card {
-    background: #fff;
-    border: 1px solid #999; /* Border lebih tegas */
+/* View 2 & 3: Full Height Card Container */
+.full-height-card {
+    height: 100%; width: 100%;
+    background: #fff; border: 1px solid #999;
     display: flex; flex-direction: column;
-    overflow: hidden;
+}
+
+/* General Card Styles */
+.card {
+    background: #fff; border: 1px solid #999;
+    display: flex; flex-direction: column; overflow: hidden;
 }
 
 .card-header {
-    background: #eee;
-    padding: 6px 10px;
-    border-bottom: 1px solid #999;
+    background: #eee; padding: 6px 10px; border-bottom: 1px solid #999;
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 11px;
-    flex-shrink: 0;
+    font-size: 11px; flex-shrink: 0;
 }
 .card-header h3 { margin: 0; font-weight: bold; color: #333; }
+.card-header.compact { height: 25px; padding: 0 10px; }
 
 .status-badge, .count-badge {
     background: #fff; border: 1px solid #999; padding: 1px 5px; font-size: 10px;
@@ -161,9 +129,43 @@ button:disabled { background: #ccc; border-color: #999; color: #666; cursor: def
 
 .card-body { padding: 0; flex: 1; position: relative; display: flex; flex-direction: column; overflow: hidden; }
 
-/* Visualizer Frame */
+/* =========================================
+   6. RISK ANALYSIS STYLING (TAB 3)
+   ========================================= */
+/* Container Laporan di Tengah */
+.report-container {
+    transition: all 0.3s ease;
+}
+
+.score-circle {
+    border-radius: 50%;
+    background: #eee; color: #999;
+    display: flex; align-items: center; justify-content: center;
+    font-family: Arial, Helvetica, sans-serif; font-weight: 900;
+    border: 4px solid rgba(0,0,0,0.1);
+}
+
+/* Risk Levels Colors */
+.score-safe { background: #27ae60; color: white; border-color: #219150; } /* Hijau */
+.score-med  { background: #f39c12; color: white; border-color: #d68910; } /* Kuning */
+.score-high { background: #e67e22; color: white; border-color: #ca6f1e; } /* Orange */
+.score-crit { background: #c0392b; color: white; border-color: #922b21; } /* Merah */
+
+.tags-container {
+    display: flex; gap: 5px; flex-wrap: wrap; align-items: center;
+}
+
+.impact-tag {
+    font-size: 11px; font-weight: bold;
+    padding: 4px 10px; border-radius: 4px;
+    background: #ffebee; color: #c62828; border: 1px solid #ef9a9a;
+}
+
+/* =========================================
+   7. VISUALIZER & LOGS (TAB 1)
+   ========================================= */
 .monitor-frame {
-    flex: 1; background: #333; /* Gelap biar kontras sama screenshot */
+    flex: 1; background: #333;
     display: flex; align-items: center; justify-content: center;
     border: 5px solid #fff;
 }
@@ -171,78 +173,120 @@ button:disabled { background: #ccc; border-color: #999; color: #666; cursor: def
 .target-label {
     position: absolute; bottom: 5px; left: 5px; 
     background: #fff; border: 1px solid #000; padding: 2px 5px; 
-    font-size: 10px; margin: 0; font-family: Arial, sans-serif;
+    font-size: 10px; margin: 0;
 }
 
-/* --- PATHFINDER TIMELINE (FIXED) --- */
+/* Logs */
+.logs-card { grid-column: 1 / 3; grid-row: 2 / 3; }
+.terminal-body {
+    background: #fff; padding: 5px;
+    font-family: 'Arial', 'Helvetica', sans-serif; font-size: 11px;
+    overflow-y: auto; color: #000;
+}
+.log-line { margin: 1px 0; border-bottom: 1px solid #f0f0f0; }
+.log-error { color: #df2531; font-weight: bold; }
+.log-info { color: #000; }
+.log-warning { color: #d35400; font-weight: bold; }
+.log-debug { color: #6a0dad; } 
+
+/* =========================================
+   8. TIMELINE (FIXED NO OVERLAP)
+   ========================================= */
 .scrollable { overflow-y: auto; padding: 10px; }
 ul.timeline { list-style: none; padding: 0; margin: 0; position: relative; }
 
+/* Garis Vertikal (Backbone) */
 ul.timeline::before {
-    content: ''; position: absolute; left: 7px; top: 5px; bottom: 5px; width: 1px; background: #ccc; z-index: 0; transform: translateX(-50%);
+    content: ''; 
+    position: absolute; 
+    /* left: 40px adalah titik tengah dari badge width 80px */
+    left: 40px; 
+    /* top: 15px agar garis mulai dari TENGAH badge baris pertama, bukan dari atap */
+    top: 15px; 
+    bottom: 0; 
+    width: 2px; 
+    background: #e0e0e0; 
+    z-index: 0; 
 }
 
+/* Item Timeline */
 .timeline-item {
-    display: flex; align-items: center; margin-bottom: 10px; 
-    position: relative; z-index: 1; 
-    min-width: 0; /* PENTING: Biar text-overflow jalan di flex child */
+    display: flex; 
+    /* flex-start = Rata Atas. Ini MENCEGAH badge turun saat teks panjang, sehingga garis tidak 'nongol' */
+    align-items: flex-start; 
+    margin-bottom: 20px; 
+    position: relative; 
+    z-index: 1; 
+    min-width: 0;
 }
 
+/* Badge Status (START/NAV/READY) - KUNCI PERBAIKAN */
 .timeline-item .time {
-    width: 14px; height: 14px; background: #fff; border: 1px solid #000; border-radius: 50%;
-    margin-right: 10px; flex-shrink: 0; font-size: 0; position: relative; z-index: 2;
+    width: 80px;            /* Lebar Tetap: Agar teks tidak overlap & garis lurus */
+    text-align: center;
+    padding: 4px 0;
+    margin-right: 15px; 
+    flex-shrink: 0;         /* Mencegah badge gepeng */
+    
+    background: #fff; 
+    border: 1px solid #999; 
+    border-radius: 4px; 
+    font-size: 10px; font-weight: bold; color: #333;
+    z-index: 2;             /* Tampil di atas garis vertikal */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
-.timeline-item .time:contains('START') { background: #000; border-color: #000; }
 
+/* Warna Badge Khusus */
+.timeline-item .time:contains('START'),
+.timeline-item .time:contains('READY') { background: #333; color: #fff; border-color: #000; }
+.timeline-item .time:contains('200') { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
+.timeline-item .time:contains('302'), 
+.timeline-item .time:contains('301') { background: #fff3e0; color: #ef6c00; border-color: #ffcc80; }
+.timeline-item .time:contains('AD-') { background: #ffebee; color: #c62828; border-color: #ef9a9a; }
+
+/* Info Box */
 .timeline-item .info { 
     background: #fff; padding: 0; flex: 1; font-size: 12px;
-    min-width: 0; /* PENTING: Biar text bisa dicrop */
-    display: flex; flex-direction: column;
-}
-
-/* URL TRUNCATION LOGIC */
-.timeline-item .url { 
-    font-family: Arial, sans-serif; 
-    display: block; 
-    color: #000; 
-    margin-top: 2px;
-    font-size: 11px;
-    
-    /* Potong teks panjang dengan titik-titik (...) */
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis;
-    max-width: 100%;
-    cursor: help;
-}
-
-.timeline-item .url:hover {
-    color: #df2531; 
+    min-width: 0; display: flex; flex-direction: column;
+    /* Margin top dikit agar teks sejajar mata dengan badge */
+    margin-top: 2px; 
 }
 
 .timeline-item .method { 
     font-weight: 800; font-size: 10px; 
     border: 1px solid #ccc; padding: 0 4px; 
     margin-right: 5px; background: #f0f0f0; 
-    align-self: flex-start;
-    margin-bottom: 2px;
+    align-self: flex-start; margin-bottom: 2px;
+    display: inline-block; width: fit-content;
 }
 
 .timeline-item.red-flag .url { color: #df2531; font-weight: bold; }
 
-/* LOGS */
-.logs-card { grid-column: 1 / 3; grid-row: 2 / 3; }
-.terminal-body {
-    background: #fff; padding: 5px;
-    font-family: Arial, sans-serif; font-size: 11px;
-    overflow-y: auto; color: #000;
+/* TRUNCATED URL (Dashboard View) */
+.timeline-item .url { 
+    font-family: Arial, sans-serif; display: block; color: #000; margin-top: 2px; font-size: 11px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+    max-width: 100%; cursor: help;
 }
-.log-line { margin: 1px 0; border-bottom: 1px solid #f0f0f0; }
-.log-error { color: #df2531; font-weight: bold; }
-.log-info { color: #000; }
-.log-debug { color: #666; }
+.timeline-item .url:hover { color: #df2531; }
 
-/* Scrollbar Minimalis Abu */
+/* FULL URL (Chain Analysis Tab) */
+ul.expanded-timeline { padding: 20px; }
+/* Geser garis di tab expanded agar konsisten */
+ul.expanded-timeline::before { left: 60px; top: 15px; }
+
+ul.expanded-timeline .timeline-item .url {
+    white-space: normal !important; 
+    overflow: visible !important; 
+    text-overflow: clip !important;
+    word-break: break-all; 
+    max-width: none; 
+    line-height: 1.4; padding-right: 10px;
+}
+
+/* =========================================
+   9. SCROLLBAR
+   ========================================= */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #f0f0f0; }
 ::-webkit-scrollbar-thumb { background: #ccc; border: 1px solid #f0f0f0; }

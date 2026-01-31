@@ -15,16 +15,15 @@
         <nav class="menubar">
             <div class="brand-area">
                 <span class="brand-name">SENTINEL</span>
-                <span class="brand-ver">v1.2</span>
+                <span class="brand-ver">v2.0</span>
             </div>
             
             <div class="tab-container">
-                <button class="tab-btn active">Dashboard</button>
+                <button class="tab-btn active" id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</button>
                 
-                <button class="tab-btn">Target Scope</button>
-                <button class="tab-btn">Proxy</button>
-                <button class="tab-btn">Intruder</button>
-                <button class="tab-btn">Settings</button>
+                <button class="tab-btn" id="tab-chain" onclick="switchTab('chain')">Chain Analysis</button>
+                
+                <button class="tab-btn" id="tab-risk" onclick="switchTab('risk')">Risk Analysis</button>
             </div>
         </nav>
 
@@ -38,49 +37,109 @@
                 <button id="scanBtn">Start Scan</button>
             </header>
 
-            <div class="dashboard-grid">
-                
-                <div class="card visualizer-card">
-                    <div class="card-header">
-                        <h3>Live Screenshot</h3>
-                        <span class="status-badge" id="tor-status">IDLE</span>
-                    </div>
-                    <div class="card-body" id="visualizer-section">
-                        <div class="monitor-frame">
-                            <img id="target-screenshot" src="" alt="Target Feed">
-                            <div class="scan-overlay"></div>
+            <div id="view-dashboard" class="view-section active">
+                <div class="dashboard-grid">
+                    
+                    <div class="card visualizer-card">
+                        <div class="card-header">
+                            <h3>Live Screenshot</h3>
+                            <span class="status-badge" id="tor-status">IDLE</span>
                         </div>
-                        <p id="target-title" class="target-label">No target loaded</p>
+                        <div class="card-body" id="visualizer-section">
+                            <div class="monitor-frame">
+                                <img id="target-screenshot" src="" alt="Target Feed">
+                                <div class="scan-overlay"></div>
+                            </div>
+                            <p id="target-title" class="target-label">No target loaded</p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="card pathfinder-card">
+                    <div class="card pathfinder-card">
+                        <div class="card-header">
+                            <h3>Live Activity</h3>
+                            <span class="count-badge">0 Events</span>
+                        </div>
+                        <div class="card-body scrollable">
+                            <ul class="timeline" id="redirect-timeline">
+                                <li class="timeline-item placeholder-item">
+                                    <span class="time">READY</span>
+                                    <div class="info">
+                                        <span class="url">System ready.</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card logs-card">
+                        <div class="card-header compact">
+                            <h3>Event Log</h3>
+                        </div>
+                        <div class="card-body terminal-body" id="logContainer">
+                            <p class="log-info">> System Initialized...</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="view-chain" class="view-section" style="display: none;">
+                <div class="card full-height-card">
                     <div class="card-header">
-                        <h3>Redirect Chain</h3>
-                        <span class="count-badge">0 Hops</span>
+                        <h3>Detailed Redirect Trace</h3>
+                        <div class="header-tools">
+                            <span style="font-size:11px; color:#666; font-weight:normal;">
+                                Full URL View (Wrapped)
+                            </span>
+                        </div>
                     </div>
                     <div class="card-body scrollable">
-                        <ul class="timeline" id="redirect-timeline">
+                        <ul class="timeline expanded-timeline" id="analysis-timeline">
                             <li class="timeline-item placeholder-item">
-                                <span class="time">READY</span>
+                                <span class="time">WAIT</span>
                                 <div class="info">
-                                    <span class="url">System ready.</span>
+                                    <span class="url">Perform a scan to see detailed analysis here.</span>
                                 </div>
                             </li>
                         </ul>
                     </div>
                 </div>
-
-                <div class="card logs-card">
-                    <div class="card-header compact">
-                        <h3>Event Log</h3>
-                    </div>
-                    <div class="card-body terminal-body" id="logContainer">
-                        <p class="log-info">> System Initialized...</p>
-                    </div>
-                </div>
-
             </div>
+
+            <div id="view-risk" class="view-section" style="display: none;">
+                <div class="card full-height-card" style="justify-content: center; align-items: center; background: #fafafa;">
+                    
+                    <div class="report-container" style="max-width: 600px; width: 100%; background: #fff; padding: 40px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                        
+                        <div class="card-header" style="background: transparent; border-bottom: 2px solid #eee; padding-left: 0; margin-bottom: 20px;">
+                            <h3 style="font-size: 16px;">Threat Assessment Report</h3>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 30px; margin-bottom: 30px;">
+                            <div class="score-circle" id="risk-score" style="width: 100px; height: 100px; font-size: 36px; border-width: 6px;">
+                                -
+                            </div>
+                            
+                            <div>
+                                <h1 id="risk-verdict" style="margin: 0; font-size: 28px; color: #333;">Awaiting Scan</h1>
+                                <p id="risk-desc" style="margin: 10px 0 0 0; font-size: 14px; color: #666; line-height: 1.5;">
+                                    Please start a scan to generate a comprehensive risk analysis report.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div style="border-top: 1px solid #eee; padding-top: 20px;">
+                            <h4 style="margin: 0 0 10px 0; color: #555;">Detected Threats:</h4>
+                            <div class="tags-container" id="risk-tags" style="min-height: 30px;">
+                                <span style="font-style: italic; color: #999; font-size: 12px;">No threats detected yet.</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
         </main>
     </div>
 
