@@ -1,6 +1,6 @@
 {
   "name": "sentinel-desktop",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "description": "Red Team Adware Analyzer",
   "main": "src/main.js",
   "scripts": {
@@ -13,27 +13,31 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "electron": "^28.0.0",
-    "electron-builder": "^24.9.1"
+    "electron": "^40.1.0",
+    "electron-builder": "^26.7.0"
   },
   "build": {
     "appId": "com.rakasatryo.sentinel",
     "productName": "Sentinel Desktop",
     "directories": {
-      "output": "dist"
+      "output": "release"
     },
     "files": [
       "src/**/*",
+      "index.html",
+      "styles.css",
       "package.json"
     ],
     "extraResources": [
       {
-        "from": "./sentinel-engine",
+        "from": "dist/sentinel-engine",
         "to": "sentinel-engine",
-        "filter": ["!**/*.exe"]
+        "filter": [
+          "!**/*.exe"
+        ]
       },
       {
-        "from": "./sentinel-engine.exe",
+        "from": "dist/sentinel-engine.exe",
         "to": "sentinel-engine.exe"
       }
     ],
@@ -46,7 +50,9 @@
     },
     "mac": {
       "target": "dmg",
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.developer-tools",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
     }
   }
 }
