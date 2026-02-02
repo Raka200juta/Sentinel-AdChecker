@@ -28,31 +28,36 @@
       "styles.css",
       "package.json"
     ],
-    "extraResources": [
-      {
-        "from": "dist/sentinel-engine",
-        "to": "sentinel-engine",
-        "filter": [
-          "!**/*.exe"
-        ]
-      },
-      {
-        "from": "dist/sentinel-engine.exe",
-        "to": "sentinel-engine.exe"
-      }
-    ],
-    "win": {
-      "target": "nsis"
-    },
     "linux": {
-      "target": "deb",
-      "category": "Utility"
+      "target": "AppImage",
+      "category": "Utility",
+      "extraResources": [
+        {
+          "from": "dist/sentinel-engine",
+          "to": "sentinel-engine"
+        }
+      ]
+    },
+    "win": {
+      "target": "nsis",
+      "extraResources": [
+        {
+          "from": "dist/sentinel-engine",
+          "to": "sentinel-engine"
+        }
+      ]
     },
     "mac": {
       "target": "dmg",
-      "category": "public.app-category.developer-tools",
+      "category": "public.app-category.utilities",
       "hardenedRuntime": false,
-      "gatekeeperAssess": false
+      "gatekeeperAssess": false,
+      "extraResources": [
+        {
+          "from": "dist/sentinel-engine",
+          "to": "sentinel-engine"
+        }
+      ]
     }
   }
 }

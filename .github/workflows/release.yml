@@ -1,4 +1,4 @@
-name: Build Sentinel Apps
+name: Build Sentinel Multi-OS
 
 on:
   push:
@@ -9,7 +9,6 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     
-    # Tambahan: Biarkan OS lain lanjut meski satu gagal
     strategy:
       fail-fast: false
       matrix:
@@ -18,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Setup Python & Node
+      # 1. Setup Environment
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -29,54 +28,47 @@ jobs:
         with:
           node-version: 18
 
-      # 2. Install Python Libs
+      # 2. Install Dependencies
       - name: Install Python Libs
         run: pip install pyinstaller requests beautifulsoup4 pycryptodome packaging
 
-      # --- DEBUGGING STEP (Cek file ada atau tidak) ---
-      - name: Debug File Structure
-        run: |
-          echo "Checking backend/bin folder..."
-          ls -R backend/bin || echo "BIN FOLDER NOT FOUND!"
+      - name: Install Node Modules
+        run: npm install
 
-      # 3. BUILD PYTHON ENGINE (WINDOWS)
+      # 3. Buat Folder dist (Penting agar tidak error "folder not found")
+      - name: Create Dist Directory
+        run: mkdir -p dist
+
+      # --- BUILD PYTHON (WINDOWS) ---
       - name: Build Python Backend (Windows)
         if: matrix.os == 'windows-latest'
         run: |
           cd backend
-          pyinstaller --onefile --name sentinel-engine --add-data "bin;bin" bridge.py
-          move dist\sentinel-engine.exe ..\
+          pyinstaller --onefile --name sentinel-engine bridge.py
+          # Pindahkan hasil build ke folder dist di root project
+          move dist\sentinel-engine.exe ..\dist\
 
-      # 4. BUILD PYTHON ENGINE (MAC/LINUX)
+      # --- BUILD PYTHON (MAC/LINUX) ---
       - name: Build Python Backend (Unix)
         if: matrix.os != 'windows-latest'
         run: |
           cd backend
-          # Pastikan binary tor punya izin execute sebelum dibundle
-          chmod +x bin/tor_linux/tor || true
-          chmod +x bin/tor_mac/tor || true
-          
-          # Build
-          pyinstaller --onefile --name sentinel-engine --add-data "bin:bin" bridge.py
-          
-          # Pindahkan hasil
-          mv dist/sentinel-engine ../
+          pyinstaller --onefile --name sentinel-engine bridge.py
+          # Pindahkan hasil build ke folder dist di root project
+          mv dist/sentinel-engine ../dist/
 
-      # 5. Install Electron & Build App
+      # 4. Build Electron App (Akan otomatis ambil file dari folder dist)
       - name: Build Electron App
-        # Tambahkan error handling biar kita tau kalau npm gagal
-        run: |
-          npm install
-          npm run dist
+        run: npm run dist
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 6. Upload Artifacts
+      # 5. Upload Hasilnya
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Sentinel-App-${{ matrix.os }}
           path: |
-            dist/*.exe
-            dist/*.deb
-            dist/*.dmg
+            release/*.exe
+            release/*.AppImage
+            release/*.dmg
