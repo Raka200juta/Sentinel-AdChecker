@@ -1,148 +1,403 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SENTINEL</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sentinel Desktop</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-    <div class="app-wrapper">
-        
-        <nav class="menubar">
-            <div class="brand-area">
-                <span class="brand-name">SENTINEL</span>
-                <span class="brand-ver">v2.0</span>
-            </div>
-            
-            <div class="tab-container">
-                <button class="tab-btn active" id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</button>
-                
-                <button class="tab-btn" id="tab-chain" onclick="switchTab('chain')">Chain Analysis</button>
-                
-                <button class="tab-btn" id="tab-risk" onclick="switchTab('risk')">Risk Analysis</button>
-            </div>
-        </nav>
-
-        <main class="main-content">
-            
-            <header class="toolbar">
-                <div class="input-group">
-                    <label for="urlInput">Target URL:</label>
-                    <input type="text" id="urlInput" placeholder="https://example.com" spellcheck="false">
-                </div>
-                <button id="scanBtn">Start Scan</button>
-            </header>
-
-            <div id="view-dashboard" class="view-section active">
-                <div class="dashboard-grid">
-                    
-                    <div class="card visualizer-card">
-                        <div class="card-header">
-                            <h3>Live Screenshot</h3>
-                            <span class="status-badge" id="tor-status">IDLE</span>
-                        </div>
-                        <div class="card-body" id="visualizer-section">
-                            <div class="monitor-frame">
-                                <img id="target-screenshot" src="" alt="Target Feed">
-                                <div class="scan-overlay"></div>
-                            </div>
-                            <p id="target-title" class="target-label">No target loaded</p>
-                        </div>
-                    </div>
-
-                    <div class="card pathfinder-card">
-                        <div class="card-header">
-                            <h3>Live Activity</h3>
-                            <span class="count-badge">0 Events</span>
-                        </div>
-                        <div class="card-body scrollable">
-                            <ul class="timeline" id="redirect-timeline">
-                                <li class="timeline-item placeholder-item">
-                                    <span class="time">READY</span>
-                                    <div class="info">
-                                        <span class="url">System ready.</span>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="card logs-card">
-                        <div class="card-header compact">
-                            <h3>Event Log</h3>
-                        </div>
-                        <div class="card-body terminal-body" id="logContainer">
-                            <p class="log-info">> System Initialized...</p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div id="view-chain" class="view-section" style="display: none;">
-                <div class="card full-height-card">
-                    <div class="card-header">
-                        <h3>Detailed Redirect Trace</h3>
-                        <div class="header-tools">
-                            <span style="font-size:11px; color:#666; font-weight:normal;">
-                                Full URL View (Wrapped)
-                            </span>
-                        </div>
-                    </div>
-                    <div class="card-body scrollable">
-                        <ul class="timeline expanded-timeline" id="analysis-timeline">
-                            <li class="timeline-item placeholder-item">
-                                <span class="time">WAIT</span>
-                                <div class="info">
-                                    <span class="url">Perform a scan to see detailed analysis here.</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div id="view-risk" class="view-section" style="display: none;">
-                <div class="card full-height-card" style="justify-content: center; align-items: center; background: #fafafa;">
-                    
-                    <div class="report-container" style="max-width: 600px; width: 100%; background: #fff; padding: 40px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                        
-                        <div class="card-header" style="background: transparent; border-bottom: 2px solid #eee; padding-left: 0; margin-bottom: 20px;">
-                            <h3 style="font-size: 16px;">Threat Assessment Report</h3>
-                        </div>
-
-                        <div style="display: flex; align-items: center; gap: 30px; margin-bottom: 30px;">
-                            <div class="score-circle" id="risk-score" style="width: 100px; height: 100px; font-size: 36px; border-width: 6px;">
-                                -
-                            </div>
-                            
-                            <div>
-                                <h1 id="risk-verdict" style="margin: 0; font-size: 28px; color: #333;">Awaiting Scan</h1>
-                                <p id="risk-desc" style="margin: 10px 0 0 0; font-size: 14px; color: #666; line-height: 1.5;">
-                                    Please start a scan to generate a comprehensive risk analysis report.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div style="border-top: 1px solid #eee; padding-top: 20px;">
-                            <h4 style="margin: 0 0 10px 0; color: #555;">Detected Threats:</h4>
-                            <div class="tags-container" id="risk-tags" style="min-height: 30px;">
-                                <span style="font-style: italic; color: #999; font-size: 12px;">No threats detected yet.</span>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-
-        </main>
+  <!-- ═══════════════════════════════════════════════ -->
+  <!--  HOME / LANDING                                 -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="page-home" class="page active">
+    <div class="home-bg">
+      <div class="grid-lines"></div>
+      <div class="scanline"></div>
     </div>
 
-    <script src="renderer.js"></script>
+    <header class="home-header">
+      <div class="logo-mark">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <polygon points="18,2 34,10 34,26 18,34 2,26 2,10" stroke="#00ff9d" stroke-width="1.5" fill="none"/>
+          <polygon points="18,8 28,13 28,23 18,28 8,23 8,13" stroke="#00ff9d" stroke-width="1" fill="none" opacity="0.4"/>
+          <circle cx="18" cy="18" r="3" fill="#00ff9d"/>
+        </svg>
+      </div>
+      <span class="logo-text">SENTINEL</span>
+      <div class="tor-badge" id="tor-status-home">
+        <span class="tor-dot"></span>
+        <span class="tor-label">TOR</span>
+      </div>
+    </header>
+
+    <main class="home-main">
+      <div class="home-title-block">
+        <p class="home-eyebrow">RED TEAM ANALYSIS SUITE v2.1</p>
+        <h1 class="home-title">Select<br/>Scan Mode</h1>
+        <p class="home-sub">Choose an analysis module to begin threat investigation</p>
+      </div>
+
+      <div class="mode-cards">
+
+        <!-- ADWARE CARD -->
+        <button class="mode-card" id="btn-adware" onclick="window.sentinelNav.goAdware()">
+          <div class="card-glow card-glow--adware"></div>
+          <div class="card-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <rect x="4" y="8" width="40" height="28" rx="3" stroke="#00ff9d" stroke-width="1.5" fill="none"/>
+              <rect x="16" y="36" width="16" height="4" fill="#00ff9d" opacity="0.3"/>
+              <rect x="10" y="40" width="28" height="1.5" fill="#00ff9d" opacity="0.5"/>
+              <path d="M14 20 L20 14 L26 20 L32 16" stroke="#00ff9d" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="34" cy="22" r="5" stroke="#ff4444" stroke-width="1.5" fill="none"/>
+              <line x1="37.5" y1="25.5" x2="40" y2="28" stroke="#ff4444" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h2 class="card-title">Scan Adware</h2>
+            <p class="card-desc">Automated malvertising crawler via Tor. Captures screenshots, traces redirect chains, and decrypts AES payloads from obfuscated ad networks.</p>
+            <ul class="card-features">
+              <li>Anonymous Tor routing</li>
+              <li>AES key extraction</li>
+              <li>Redirect pathfinder</li>
+              <li>Real-time log stream</li>
+            </ul>
+          </div>
+          <div class="card-arrow">→</div>
+        </button>
+
+        <!-- PHISHING CARD -->
+        <button class="mode-card mode-card--phishing" id="btn-phishing" onclick="window.sentinelNav.goPhishing()">
+          <div class="card-glow card-glow--phishing"></div>
+          <div class="card-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <path d="M24 6 C24 6 10 12 10 24 C10 32 16 40 24 42 C32 40 38 32 38 24 C38 12 24 6 24 6Z" stroke="#f0a500" stroke-width="1.5" fill="none"/>
+              <path d="M24 14 L24 26" stroke="#f0a500" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="24" cy="32" r="1.5" fill="#f0a500"/>
+              <path d="M18 20 C18 16 30 16 30 20" stroke="#f0a500" stroke-width="1" opacity="0.5"/>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h2 class="card-title">Scan Phishing</h2>
+            <p class="card-desc">Deep URL and domain analysis. Scores threats across multiple risk dimensions using ML pattern matching and a curated phishing category database.</p>
+            <ul class="card-features">
+              <li>MobSF-style risk scoring</li>
+              <li>Category threat database</li>
+              <li>Domain reputation check</li>
+              <li>Indicator of Compromise</li>
+            </ul>
+          </div>
+          <div class="card-arrow">→</div>
+        </button>
+
+      </div>
+    </main>
+
+    <footer class="home-footer">
+      <span id="status-home" class="status-chip status-idle">● IDLE</span>
+      <span class="footer-sep">|</span>
+      <span class="footer-hint">Traffic routed via anonymous Tor circuit</span>
+    </footer>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!--  ADWARE DASHBOARD                               -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="page-adware" class="page">
+    <div class="dash-header">
+      <button class="back-btn" onclick="window.sentinelNav.goHome()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Back
+      </button>
+      <div class="dash-title-group">
+        <span class="dash-badge dash-badge--adware">ADWARE</span>
+        <h2 class="dash-title">Malvertising Scanner</h2>
+      </div>
+      <div class="tor-badge" id="tor-status-adware">
+        <span class="tor-dot"></span>
+        <span class="tor-label">TOR</span>
+      </div>
+    </div>
+
+    <div class="dash-toolbar">
+      <input type="text" id="adware-url-input" class="url-input" placeholder="Enter target URL  e.g. vidcloudmv.net" />
+      <button class="scan-btn scan-btn--adware" id="adware-scan-btn" onclick="window.adwareScan.start()">
+        <span class="scan-btn-text">INITIATE SCAN</span>
+        <span class="scan-btn-loader" style="display:none">
+          <svg class="spin" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-dasharray="20 17" fill="none"/></svg>
+          SCANNING…
+        </span>
+      </button>
+    </div>
+
+    <div class="dash-grid dash-grid--adware">
+
+      <!-- Screenshot Panel -->
+      <div class="panel panel--screenshot">
+        <div class="panel-header">
+          <span class="panel-icon">📷</span>
+          <h3 class="panel-title">Screenshot</h3>
+          <span class="panel-status" id="ss-status"></span>
+        </div>
+        <div class="panel-body">
+          <div class="screenshot-container" id="screenshot-container">
+            <div class="screenshot-placeholder">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.3">
+                <rect x="6" y="10" width="36" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                <circle cx="24" cy="24" r="7" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                <circle cx="24" cy="24" r="2" fill="currentColor"/>
+              </svg>
+              <p>No screenshot yet</p>
+            </div>
+            <img id="screenshot-img" src="" alt="Screenshot" style="display:none; width:100%; border-radius:4px;"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pathfinder Panel -->
+      <div class="panel panel--pathfinder">
+        <div class="panel-header">
+          <span class="panel-icon">🔀</span>
+          <h3 class="panel-title">Redirect Pathfinder</h3>
+          <span class="panel-count" id="path-count">0 hops</span>
+        </div>
+        <div class="panel-body">
+          <div class="path-chain" id="path-chain">
+            <div class="path-empty">No redirect chain captured yet</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crypto Panel -->
+      <div class="panel panel--crypto">
+        <div class="panel-header">
+          <span class="panel-icon">🔑</span>
+          <h3 class="panel-title">Crypto Findings</h3>
+        </div>
+        <div class="panel-body">
+          <div class="crypto-grid" id="crypto-grid">
+            <div class="crypto-item">
+              <label>AES Keys Found</label>
+              <span id="aes-count">—</span>
+            </div>
+            <div class="crypto-item">
+              <label>IVs Found</label>
+              <span id="iv-count">—</span>
+            </div>
+            <div class="crypto-item">
+              <label>Decrypted Payloads</label>
+              <span id="payload-count">—</span>
+            </div>
+            <div class="crypto-item">
+              <label>Ad Networks Flagged</label>
+              <span id="adnet-count">—</span>
+            </div>
+          </div>
+          <div class="decrypted-payloads" id="decrypted-payloads"></div>
+        </div>
+      </div>
+
+      <!-- Logs Panel -->
+      <div class="panel panel--logs">
+        <div class="panel-header">
+          <span class="panel-icon">📟</span>
+          <h3 class="panel-title">Live Log Stream</h3>
+          <button class="clear-btn" onclick="window.adwareScan.clearLogs()">CLEAR</button>
+        </div>
+        <div class="panel-body">
+          <div class="log-terminal" id="log-terminal">
+            <div class="log-entry log-info">[SENTINEL] Ready. Enter a URL and initiate scan.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="dash-footer">
+      <span id="status-adware" class="status-chip status-idle">● IDLE</span>
+    </footer>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!--  PHISHING DASHBOARD                             -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="page-phishing" class="page">
+    <div class="dash-header">
+      <button class="back-btn" onclick="window.sentinelNav.goHome()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Back
+      </button>
+      <div class="dash-title-group">
+        <span class="dash-badge dash-badge--phishing">PHISHING</span>
+        <h2 class="dash-title">Threat Intelligence Analyzer</h2>
+      </div>
+      <div class="tor-badge" id="tor-status-phishing">
+        <span class="tor-dot"></span>
+        <span class="tor-label">TOR</span>
+      </div>
+    </div>
+
+    <div class="dash-toolbar">
+      <input type="text" id="phishing-url-input" class="url-input" placeholder="Enter URL or domain to analyze  e.g. login-secure-paypal.xyz" />
+      <button class="scan-btn scan-btn--phishing" id="phishing-scan-btn" onclick="window.phishingScan.start()">
+        <span class="scan-btn-text">ANALYZE THREAT</span>
+        <span class="scan-btn-loader" style="display:none">
+          <svg class="spin" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-dasharray="20 17" fill="none"/></svg>
+          ANALYZING…
+        </span>
+      </button>
+    </div>
+
+    <!-- Results area (hidden until scan runs) -->
+    <div id="phishing-results" style="display:none">
+      <div class="phish-grid">
+
+        <!-- Risk Score Card -->
+        <div class="panel panel--score">
+          <div class="panel-header">
+            <span class="panel-icon">🎯</span>
+            <h3 class="panel-title">Risk Score</h3>
+          </div>
+          <div class="panel-body score-body">
+            <div class="score-ring-wrap">
+              <svg class="score-ring" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" stroke="#1a1a2e" stroke-width="12" fill="none"/>
+                <circle cx="60" cy="60" r="50" id="score-ring-bar"
+                  stroke="#00ff9d" stroke-width="12" fill="none"
+                  stroke-dasharray="314" stroke-dashoffset="314"
+                  stroke-linecap="round"
+                  transform="rotate(-90 60 60)"
+                  style="transition: stroke-dashoffset 1s ease, stroke 0.5s ease"/>
+              </svg>
+              <div class="score-center">
+                <span class="score-value" id="score-value">—</span>
+                <span class="score-label">/100</span>
+              </div>
+            </div>
+            <div class="score-verdict" id="score-verdict">Awaiting analysis</div>
+            <div class="verdict-badge" id="verdict-badge"></div>
+          </div>
+        </div>
+
+        <!-- Category Match Card -->
+        <div class="panel panel--category">
+          <div class="panel-header">
+            <span class="panel-icon">🏷️</span>
+            <h3 class="panel-title">Threat Category</h3>
+          </div>
+          <div class="panel-body">
+            <div class="category-match" id="category-match">
+              <div class="cat-empty">Run analysis to detect threat category</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- IOC Breakdown -->
+        <div class="panel panel--ioc">
+          <div class="panel-header">
+            <span class="panel-icon">🔬</span>
+            <h3 class="panel-title">Indicators of Compromise</h3>
+          </div>
+          <div class="panel-body">
+            <div class="ioc-list" id="ioc-list">
+              <div class="ioc-placeholder">No IOCs detected yet</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Domain Intel -->
+        <div class="panel panel--domain">
+          <div class="panel-header">
+            <span class="panel-icon">🌐</span>
+            <h3 class="panel-title">Domain Intelligence</h3>
+          </div>
+          <div class="panel-body">
+            <table class="intel-table" id="domain-intel-table">
+              <tbody>
+                <tr><td class="intel-key">Domain</td><td class="intel-val" id="di-domain">—</td></tr>
+                <tr><td class="intel-key">TLD Risk</td><td class="intel-val" id="di-tld">—</td></tr>
+                <tr><td class="intel-key">URL Length</td><td class="intel-val" id="di-length">—</td></tr>
+                <tr><td class="intel-key">Subdomain Depth</td><td class="intel-val" id="di-subdomain">—</td></tr>
+                <tr><td class="intel-key">Has IP Address</td><td class="intel-val" id="di-hasip">—</td></tr>
+                <tr><td class="intel-key">Suspicious Chars</td><td class="intel-val" id="di-chars">—</td></tr>
+                <tr><td class="intel-key">Port Anomaly</td><td class="intel-val" id="di-port">—</td></tr>
+                <tr><td class="intel-key">HTTPS</td><td class="intel-val" id="di-https">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Risk Breakdown Bars -->
+        <div class="panel panel--breakdown">
+          <div class="panel-header">
+            <span class="panel-icon">📊</span>
+            <h3 class="panel-title">Risk Breakdown</h3>
+          </div>
+          <div class="panel-body">
+            <div class="risk-bars" id="risk-bars">
+              <div class="risk-bar-item">
+                <span class="risk-bar-label">URL Structure</span>
+                <div class="risk-bar-track"><div class="risk-bar-fill" id="rb-url" style="width:0%"></div></div>
+                <span class="risk-bar-pct" id="rb-url-pct">0%</span>
+              </div>
+              <div class="risk-bar-item">
+                <span class="risk-bar-label">Domain Reputation</span>
+                <div class="risk-bar-track"><div class="risk-bar-fill" id="rb-domain" style="width:0%"></div></div>
+                <span class="risk-bar-pct" id="rb-domain-pct">0%</span>
+              </div>
+              <div class="risk-bar-item">
+                <span class="risk-bar-label">Keyword Matching</span>
+                <div class="risk-bar-track"><div class="risk-bar-fill" id="rb-keyword" style="width:0%"></div></div>
+                <span class="risk-bar-pct" id="rb-keyword-pct">0%</span>
+              </div>
+              <div class="risk-bar-item">
+                <span class="risk-bar-label">TLD Risk</span>
+                <div class="risk-bar-track"><div class="risk-bar-fill" id="rb-tld" style="width:0%"></div></div>
+                <span class="risk-bar-pct" id="rb-tld-pct">0%</span>
+              </div>
+              <div class="risk-bar-item">
+                <span class="risk-bar-label">Category DB Match</span>
+                <div class="risk-bar-track"><div class="risk-bar-fill" id="rb-catdb" style="width:0%"></div></div>
+                <span class="risk-bar-pct" id="rb-catdb-pct">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Raw Details / Log -->
+        <div class="panel panel--phish-log">
+          <div class="panel-header">
+            <span class="panel-icon">📋</span>
+            <h3 class="panel-title">Analysis Log</h3>
+          </div>
+          <div class="panel-body">
+            <div class="log-terminal" id="phish-log-terminal"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="phishing-empty" class="phish-empty-state">
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none" opacity="0.25">
+        <path d="M32 8 C32 8 12 16 12 32 C12 44 20 56 32 58 C44 56 52 44 52 32 C52 16 32 8 32 8Z" stroke="currentColor" stroke-width="2" fill="none"/>
+        <path d="M32 20 L32 36" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="32" cy="44" r="2" fill="currentColor"/>
+      </svg>
+      <p>Enter a URL above and click <strong>Analyze Threat</strong></p>
+      <p class="phish-empty-sub">Sentinel will score the URL across 5 risk dimensions and match against the phishing category database</p>
+    </div>
+
+    <footer class="dash-footer">
+      <span id="status-phishing" class="status-chip status-idle">● IDLE</span>
+    </footer>
+  </div>
+
+  <script src="renderer.js"></script>
+  <script src="phishing_engine.js"></script>
 </body>
 </html>

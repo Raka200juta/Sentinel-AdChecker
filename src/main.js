@@ -350,4 +350,23 @@ ipcMain.handle('perform-headless-scan', async (event, targetUrl) => {
   }
 });
 
+// --- 3. IPC HANDLER: PHISHING ANALYSIS (TAMBAHKAN INI) ---
+ipcMain.handle('analyze-phishing', async (event, url) => {
+    try {
+        // Memanggil Flask backend di port 5000
+        // Jika Node.js < 18, pastikan sudah install & require node-fetch
+        const response = await fetch('http://127.0.0.1:5000/analyze/phishing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url }),
+        });
+        
+        const data = await response.json();
+        return data; 
+    } catch (err) {
+        console.error('[Main] Phishing analysis error:', err.message);
+        return { success: false, error: err.message };
+    }
+});
+
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
